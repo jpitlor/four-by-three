@@ -6,7 +6,7 @@ import HowToPlay from "./HowToPlay.tsx";
 import CreateGame from "./CreateGame.tsx";
 import Layout from "./Layout.tsx";
 
-import "tailwindcss/index.css";
+import "./main.css";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

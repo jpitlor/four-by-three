@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import uniq from "lodash.uniq";
 import shuffle from "lodash.shuffle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faShuffle, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { getKeyWord, proposedSolutionIsCorrect } from "./utils/solutionChecks.ts";
+import Button from "./components/Button.tsx";
 
 const solution = [
   ["Bolt", "Washer", "Nut"],
@@ -20,7 +21,6 @@ export default function PlayGame() {
   const canCheckSolution = proposedSets.length === 4;
   const keyWord = getKeyWord(proposedSets);
   const wipKeyWord = getKeyWord([...proposedSets, selected]);
-  const buttonClasses = "text-sm p-1 pl-3 pr-3 border-1 border-black rounded-xl cursor-pointer disabled:text-gray-500 disabled:border-gray-500 disabled:cursor-default hover:shadow-md disabled:hover:shadow-none";
 
   function handleShuffle() {
     setWords(shuffle(words));
@@ -42,12 +42,8 @@ export default function PlayGame() {
   return (
     <div>
       <div className="flex flex-row gap-4 justify-center content-center mt-4 mb-8">
-        <button onClick={handleShuffle} className={buttonClasses}>
-          Shuffle
-        </button>
-        <button onClick={checkSolution} disabled={!canCheckSolution} className={buttonClasses}>
-          Check Solution
-        </button>
+        <Button onClick={handleShuffle} icon={faShuffle} text="Shuffle" />
+        <Button onClick={checkSolution} disabled={!canCheckSolution} icon={faCheck} text="Check Solution" />
       </div>
       <div className="grid grid-cols-3 grid-rows-3 gap-4 p-4">
         {words.map(word => {
@@ -78,15 +74,15 @@ export default function PlayGame() {
               className={containerClasses}
               onClick={selectWord}
             >
-              <div className="text-lg/14 flex justify-center content-center h-full w-full p-3">
+              <div className="text-xl flex justify-center content-center h-full w-full p-3">
                 {word}
               </div>
             </div>
           )
         })}
       </div>
-      <div>
-        <h2>Proposed Sets</h2>
+      <div className="flex flex-col gap-4 mt-4">
+        <h2 className="text-lg text-center text-emerald-700 underline underline-offset-4">Proposed Sets</h2>
         {proposedSets.map((proposedSet, i) => {
           function remove() {
             const newProposedSets = [...proposedSets];
@@ -95,9 +91,13 @@ export default function PlayGame() {
           }
 
           return (
-            <div className="flex flex-row">
-              <span className="flex-1">{proposedSet.join(", ")}</span>
-              <FontAwesomeIcon icon={faClose} className="bg-red-500" onClick={remove} />
+            <div className="flex flex-row pl-4 pr-4">
+              <span className="flex-1 text-lg">{proposedSet.join(", ")}</span>
+              <FontAwesomeIcon
+                icon={faClose}
+                className="bg-red-500 text-white rounded-full inline-block w-4 h-4! cursor-pointer"
+                onClick={remove}
+              />
             </div>
           );
         })}

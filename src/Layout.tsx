@@ -22,7 +22,7 @@ const items = [
 
 export default function Layout() {
   return (
-    <div className="bg-gray-100 h-screen">
+    <div className="bg-gray-100 h-screen overflow-scroll">
       <div className="flex flex-row w-screen gap-16 justify-center content-center bg-white">
         {items.map(item => {
           // eslint-disable-next-line react-hooks/rules-of-hooks
