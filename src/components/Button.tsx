@@ -29,7 +29,10 @@ export default function Button({
     "disabled:border-gray-500",
     "disabled:cursor-default",
     "hover:shadow-md",
+    "focus:shadow-sm",
     "disabled:hover:shadow-none",
+    "disabled:bg-gray-200",
+    "disabled:text-gray-500",
     className,
   ].join(" ");
   return (

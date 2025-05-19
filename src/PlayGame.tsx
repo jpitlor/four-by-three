@@ -8,16 +8,12 @@ import Button from "./components/Button.tsx";
 import RainbowBorder from "./components/RainbowBorder.tsx";
 import classNames from "classnames";
 import type { Solution } from "./utils/Models.ts";
-
-const solution = [
-  { name: "Hardware", items: ["Bolt", "Washer", "Nut"] },
-  { name: "Lightning __", items: ["Bolt", "Strike", "McQueen"] },
-  { name: "Move Fast", items: ["Bolt", "Run", "Sprint"] },
-  { name: "Medieval ammo", items: ["Bolt", "Dart", "Arrow"] }
-]
+import { useSolution } from "./utils/solutionHooks.ts";
+import { Card } from "./components/Card.tsx";
 
 export default function PlayGame() {
-  const [words, setWords] = useState(uniq(solution.flatMap(c => c.items)));
+  const solution = useSolution();
+  const [words, setWords] = useState(uniq(solution?.flatMap(c => c.items)));
   const [proposedCategories, setProposedCategories] = useState([] as Solution);
   const [selected, setSelected] = useState([] as string[]);
 
@@ -31,6 +27,10 @@ export default function PlayGame() {
   }
 
   function checkSolution() {
+    if (!solution) {
+      return;
+    }
+
     alert(proposedSolutionIsCorrect(proposedCategories, solution));
   }
 
@@ -41,7 +41,11 @@ export default function PlayGame() {
 
     setProposedCategories([...proposedCategories, { name: "", items: [...selected] }]);
     setSelected([]);
-  }, [proposedCategories, selected])
+  }, [proposedCategories, selected]);
+
+  useEffect(() => {
+    handleShuffle();
+  }, []);
 
   return (
     <div>
@@ -114,8 +118,11 @@ export default function PlayGame() {
           )
         })}
       </div>
-      <div className="flex flex-col gap-4 mt-4">
-        <h2 className="text-lg text-center text-emerald-700 underline underline-offset-4">Proposed Categories</h2>
+      <Card className="flex flex-col gap-4 mt-4">
+        <h2 className="text-lg text-center text-emerald-700">Proposed Categories</h2>
+        {proposedCategories.length === 0 && <div className="text-center">
+            <p className="text-xl text-gray-500 m-4 italic">Pick sets of words to propose categories!</p>
+        </div>}
         {proposedCategories.map((proposedCategory, i) => {
           function remove() {
             const newProposedCategories = [...proposedCategories];
@@ -124,17 +131,17 @@ export default function PlayGame() {
           }
 
           return (
-            <div className="flex flex-row pl-4 pr-4">
+            <div className="flex flex-row pl-4 pr-4 m-auto" key={i}>
               <span className="flex-1 text-lg">{proposedCategory.items.join(", ")}</span>
               <FontAwesomeIcon
                 icon={faClose}
-                className="bg-red-500 text-white rounded-full inline-block w-4 h-4! cursor-pointer"
+                className="bg-red-500 ml-4 mt-2 mb-2 text-white rounded-full inline-block w-4 h-4! cursor-pointer"
                 onClick={remove}
               />
             </div>
           );
         })}
-      </div>
+      </Card>
     </div>
   );
 }

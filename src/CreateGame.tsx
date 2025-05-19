@@ -33,6 +33,15 @@ export default function CreateGame() {
     }
   }
 
+  function setName(i: number) {
+    return (e: ChangeEvent<HTMLInputElement>) => {
+      const newSolution = cloneDeep(solution);
+      newSolution[i].name = e.target.value;
+      setSolution(newSolution);
+      setUrl("");
+    }
+  }
+
   function makeGame(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const s = btoa(JSON.stringify(solution));
@@ -58,17 +67,22 @@ export default function CreateGame() {
           {solution.map((category, i) => (
             <div key={i} className="mt-8 flex flex-col">
               <h2 className="text-lg text-center">Category {i + 1}</h2>
+              <div className="flex gap-4">
+                <h3 className="w-16">Name</h3>
+                <input value={category.name} onChange={setName(i)} className={inputClasses} />
+              </div>
               <div className="flex lg:flex-row flex-col gap-4 mt-2">
-              {category.items.map((word, j) => (
-                <input
-                  key={`${i}-${j}`}
-                  value={word}
-                  onChange={setWord(i, j)}
-                  disabled={j === 0}
-                  className={inputClasses}
-                />
-              ))}
-            </div>
+                <h3 className="w-16">Words</h3>
+                {category.items.map((word, j) => (
+                  <input
+                    key={`${i}-${j}`}
+                    value={word}
+                    onChange={setWord(i, j)}
+                    disabled={j === 0}
+                    className={inputClasses}
+                  />
+                ))}
+              </div>
             </div>
           ))}
 

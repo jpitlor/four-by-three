@@ -1,8 +1,11 @@
-import type { JSX } from "react";
+import * as React from "react";
 
-export function Card({ children }: { children: JSX.Element | JSX.Element[] }): JSX.Element {
+export function Card({ children, className }: {
+  children: React.ReactNode | React.ReactNode[],
+  className?: string,
+}) {
   return (
-    <div className="m-4 p-4 rounded-md bg-white shadow">
+    <div className={`m-4 p-4 rounded-md bg-white shadow ${className}`}>
       {children}
     </div>
   )
