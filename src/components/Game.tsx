@@ -33,10 +33,6 @@ export default function Game({
   }, [words]);
 
   useEffect(() => {
-    if (hideShuffle) {
-      return;
-    }
-
     handleShuffle();
     // Effect updates words which would update this effect
     // which would update words (and on and on)
