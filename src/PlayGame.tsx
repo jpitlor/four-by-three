@@ -7,30 +7,31 @@ import { getKeyWord, proposedSolutionIsCorrect } from "./utils/solutionChecks.ts
 import Button from "./components/Button.tsx";
 import RainbowBorder from "./components/RainbowBorder.tsx";
 import classNames from "classnames";
+import type { Solution } from "./utils/Models.ts";
 
 const solution = [
-  ["Bolt", "Washer", "Nut"],
-  ["Bolt", "Strike", "McQueen"],
-  ["Bolt", "Run", "Sprint"],
-  ["Bolt", "Dart", "Arrow"]
+  { name: "Hardware", items: ["Bolt", "Washer", "Nut"] },
+  { name: "Lightning __", items: ["Bolt", "Strike", "McQueen"] },
+  { name: "Move Fast", items: ["Bolt", "Run", "Sprint"] },
+  { name: "Medieval ammo", items: ["Bolt", "Dart", "Arrow"] }
 ]
 
 export default function PlayGame() {
-  const [words, setWords] = useState(uniq(solution.flat()));
-  const [proposedSets, setProposedSets] = useState([] as string[][]);
+  const [words, setWords] = useState(uniq(solution.flatMap(c => c.items)));
+  const [proposedCategories, setProposedCategories] = useState([] as Solution);
   const [selected, setSelected] = useState([] as string[]);
 
-  const canCheckSolution = proposedSets.length === 4;
-  const proposedWords = proposedSets.flat();
-  const keyWord = getKeyWord(proposedSets);
-  const wipKeyWord = getKeyWord([...proposedSets, selected]);
+  const canCheckSolution = proposedCategories.length === 4;
+  const proposedWords = proposedCategories.flatMap(c => c.items);
+  const keyWord = getKeyWord(proposedCategories);
+  const wipKeyWord = getKeyWord([...proposedCategories, { name: "", items: selected }]);
 
   function handleShuffle() {
     setWords(shuffle(words));
   }
 
   function checkSolution() {
-    alert(proposedSolutionIsCorrect(proposedSets, solution));
+    alert(proposedSolutionIsCorrect(proposedCategories, solution));
   }
 
   useEffect(() => {
@@ -38,9 +39,9 @@ export default function PlayGame() {
       return;
     }
 
-    setProposedSets([...proposedSets, [...selected]]);
+    setProposedCategories([...proposedCategories, { name: "", items: [...selected] }]);
     setSelected([]);
-  }, [proposedSets, selected])
+  }, [proposedCategories, selected])
 
   return (
     <div>
@@ -51,7 +52,7 @@ export default function PlayGame() {
       <div className="grid grid-cols-3 grid-rows-3 gap-4 p-4">
         {words.map(word => {
           const isSelected = selected.includes(word);
-          const isPotentialKeyWord = proposedSets.length === 1
+          const isPotentialKeyWord = proposedCategories.length === 1
             && proposedWords.includes(word)
             && selected.every(s => !proposedWords.includes(s));
           const isDisabled = (
@@ -59,16 +60,16 @@ export default function PlayGame() {
             proposedWords.includes(word)
             && (!!keyWord && keyWord !== word || !!wipKeyWord && wipKeyWord !== word)
           ) || (
-            // The selected set has 2 words, neither of which is a key word, and I am not a key word
+            // The selected category has 2 words, neither of which is a key word, and I am not a key word
             keyWord !== word
             && !isPotentialKeyWord
             && selected.length === 2
-            && proposedSets.length > 0
+            && proposedCategories.length > 0
             && !isSelected
             && selected.every(s => !proposedWords.includes(s))
           ) ||
-          proposedSets.length === 4;
-          const hasRainbowBorder = proposedSets.length < 4 && (isPotentialKeyWord || keyWord === word || wipKeyWord === word);
+          proposedCategories.length === 4;
+          const hasRainbowBorder = proposedCategories.length < 4 && (isPotentialKeyWord || keyWord === word || wipKeyWord === word);
           const containerClasses= classNames({
             "rounded-md": true,
             "bg-gray-200": isDisabled,
@@ -114,17 +115,17 @@ export default function PlayGame() {
         })}
       </div>
       <div className="flex flex-col gap-4 mt-4">
-        <h2 className="text-lg text-center text-emerald-700 underline underline-offset-4">Proposed Sets</h2>
-        {proposedSets.map((proposedSet, i) => {
+        <h2 className="text-lg text-center text-emerald-700 underline underline-offset-4">Proposed Categories</h2>
+        {proposedCategories.map((proposedCategory, i) => {
           function remove() {
-            const newProposedSets = [...proposedSets];
-            newProposedSets.splice(i, 1);
-            setProposedSets(newProposedSets);
+            const newProposedCategories = [...proposedCategories];
+            newProposedCategories.splice(i, 1);
+            setProposedCategories(newProposedCategories);
           }
 
           return (
             <div className="flex flex-row pl-4 pr-4">
-              <span className="flex-1 text-lg">{proposedSet.join(", ")}</span>
+              <span className="flex-1 text-lg">{proposedCategory.items.join(", ")}</span>
               <FontAwesomeIcon
                 icon={faClose}
                 className="bg-red-500 text-white rounded-full inline-block w-4 h-4! cursor-pointer"

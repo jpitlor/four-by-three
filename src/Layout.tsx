@@ -4,18 +4,18 @@ import { faDice, faQuestionCircle, faEdit } from "@fortawesome/free-solid-svg-ic
 
 const items = [
   {
-    label: <NavLink to="/">Play Game</NavLink>,
-    key: '/',
+    label: "Play Game",
+    to: '/',
     icon: <FontAwesomeIcon icon={faDice} className="mr-2" />,
   },
   {
-    label: <NavLink to="/about">How to Play</NavLink>,
-    key: '/about',
+    label: "How to Play",
+    to: '/about',
     icon: <FontAwesomeIcon icon={faQuestionCircle} className="mr-2" />,
   },
   {
-    label: <NavLink to="/create">Create Game</NavLink>,
-    key: '/create',
+    label: "Create Game",
+    to: '/create',
     icon: <FontAwesomeIcon icon={faEdit} className="mr-2" />
   },
 ];
@@ -26,15 +26,15 @@ export default function Layout() {
       <div className="flex flex-row w-screen gap-16 justify-center content-center bg-white">
         {items.map(item => {
           // eslint-disable-next-line react-hooks/rules-of-hooks
-          const isActive = useMatch(item.key)
+          const isActive = useMatch(item.to)
           const activeStyles = isActive
             ? "text-emerald-500 border-b-2 pb-3"
             : "hover:text-emerald-500 hover:border-b-2 hover:pb-3";
 
           return (
-            <div key={item.key} className={`p-4 border-emerald-500 border-solid ${activeStyles}`}>
+            <NavLink key={item.to} to={item.to} className={`block p-4 border-emerald-500 border-solid ${activeStyles}`}>
               {item.icon}{item.label}
-            </div>
+            </NavLink>
           )
         })}
       </div>

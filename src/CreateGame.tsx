@@ -1,27 +1,33 @@
-import type { Solution } from "./utils/Models.ts";
 import { type ChangeEvent, type FormEvent, useState } from "react";
+import cloneDeep from "lodash.clonedeep";
+import type { Solution } from "./utils/Models.ts";
 import Button from "./components/Button.tsx";
 import { Card } from "./components/Card.tsx";
 import RainbowBorder from "./components/RainbowBorder.tsx";
 
 export default function CreateGame() {
-  const [solution, setSolution] = useState<Solution>([["", "", ""], ["", "", ""], ["", "", ""], ["", "", ""]]);
+  const [solution, setSolution] = useState<Solution>([
+    { name: "", items: ["", "", ""] },
+    { name: "", items: ["", "", ""] },
+    { name: "", items: ["", "", ""] },
+    { name: "", items: ["", "", ""] },
+  ]);
   const [url, setUrl] = useState("");
 
   const inputClasses = "p-1 pl-4 pr-4 border-2 border-gray-500 rounded-sm flex-1 bg-white disabled:bg-gray-200 disabled:text-gray-500";
-  const canMakeGame = solution.every(set => set.every(word => !!word));
+  const canMakeGame = solution.every(category => category.items.every(word => !!word));
 
   function setKeyWord(e: ChangeEvent<HTMLInputElement>) {
-    const newSolution = [...solution.map(x => [...x])];
-    newSolution.forEach(x => x[0] = e.target.value);
+    const newSolution = cloneDeep(solution);
+    newSolution.forEach(x => x.items[0] = e.target.value);
     setSolution(newSolution);
     setUrl("");
   }
 
   function setWord(i: number, j: number) {
     return (e: ChangeEvent<HTMLInputElement>) => {
-      const newSolution = [...solution.map(x => [...x])];
-      newSolution[i][j] = e.target.value;
+      const newSolution = cloneDeep(solution);
+      newSolution[i].items[j] = e.target.value;
       setSolution(newSolution);
       setUrl("");
     }
@@ -41,15 +47,19 @@ export default function CreateGame() {
           <h2 className="text-lg text-center">Key Word</h2>
           <div className="flex mt-2">
             <RainbowBorder className="flex-1 flex">
-              <input value={solution[0][0]} onChange={setKeyWord} className={`w-full ${inputClasses} border-none!`} />
+              <input
+                value={solution[0].items[0]}
+                onChange={setKeyWord}
+                className={`w-full ${inputClasses} border-none!`}
+              />
             </RainbowBorder>
           </div>
 
-          {solution.map((set, i) => (
-            <div key={i} className="mt-8">
-              <h2 className="text-lg text-center">Set {i + 1}</h2>
+          {solution.map((category, i) => (
+            <div key={i} className="mt-8 flex flex-col">
+              <h2 className="text-lg text-center">Category {i + 1}</h2>
               <div className="flex lg:flex-row flex-col gap-4 mt-2">
-              {set.map((word, j) => (
+              {category.items.map((word, j) => (
                 <input
                   key={`${i}-${j}`}
                   value={word}

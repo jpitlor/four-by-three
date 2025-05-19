@@ -2,8 +2,10 @@ import type { Solution } from "./Models.ts";
 import uniq from "lodash.uniq";
 
 export function proposedSolutionIsCorrect(proposed: Solution, actual: Solution): boolean {
-  for (const proposedSet of proposed) {
-    const hasMatch = actual.some(actualSet => actualSet.every(actualWord => proposedSet.includes(actualWord)))
+  for (const proposedCategory of proposed) {
+    const hasMatch = actual.some(actualCategory =>
+      actualCategory.items.every(actualWord =>
+        proposedCategory.items.includes(actualWord)))
     if (!hasMatch) {
       return false;
     }
@@ -17,6 +19,6 @@ export function getKeyWord(proposed: Solution): string | undefined {
     return undefined;
   }
 
-  const allWords = uniq(proposed.flat());
-  return allWords.find(word => proposed.every(set => set.includes(word)));
+  const allWords = uniq(proposed.flatMap(c => c.items));
+  return allWords.find(word => proposed.every(category => category.items.includes(word)));
 }
