@@ -45,9 +45,9 @@ export default function Game({
 
   return (
     <div>
-      <div className="flex flex-row gap-4 justify-center content-center mt-4">
+      {!hideShuffle && <div className="flex flex-row gap-4 justify-center content-center mt-4">
         <Button onClick={handleShuffle} icon={faShuffle} text="Shuffle" />
-      </div>
+      </div>}
       <div className="grid grid-cols-3 grid-rows-3 gap-4 p-4">
         {words.map(word => {
           const isSelected = selected.includes(word);
