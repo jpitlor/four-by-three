@@ -1,9 +1,9 @@
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
-import type { Solution } from "./utils/Models.ts";
-import Button from "./components/Button.tsx";
-import { Card } from "./components/Card.tsx";
-import RainbowBorder from "./components/RainbowBorder.tsx";
+import type { Solution } from "../utils/Models.ts";
+import Button from "./Button.tsx";
+import { Card } from "./Card.tsx";
+import RainbowBorder from "./RainbowBorder.tsx";
 
 export default function CreateGame() {
   const [solution, setSolution] = useState<Solution>([

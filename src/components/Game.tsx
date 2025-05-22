@@ -5,24 +5,24 @@ import { getKeyWord } from "../utils/solutionChecks.ts";
 import uniq from "lodash.uniq";
 import { useCallback, useEffect, useState } from "react";
 import shuffle from "lodash.shuffle";
+import { faPencil, faQuestionCircle, faShuffle } from "@fortawesome/free-solid-svg-icons";
+import Modal from "react-modal";
 import Button from "./Button.tsx";
-import { faShuffle } from "@fortawesome/free-solid-svg-icons";
+import CreateGame from "./CreateGame.tsx";
 
 export default function Game({
   solution,
   selected,
   setSelected,
   proposedCategories,
-  disabled = false,
-  hideShuffle = false,
 }: {
   solution: Solution,
   selected: string[],
   setSelected: (s: string[]) => void,
   proposedCategories: Solution,
-  disabled?: boolean,
-  hideShuffle?: boolean,
 }) {
+  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
+  const [isCreateGameOpen, setIsCreateGameOpen] = useState(false);
   const [words, setWords] = useState(uniq(solution?.flatMap(c => c.items)));
   const proposedWords = proposedCategories.flatMap(c => c.items);
   const keyWord = getKeyWord(proposedCategories);
@@ -32,18 +32,50 @@ export default function Game({
     setWords(shuffle(words));
   }, [words]);
 
+  function openHowToPlay() {
+    setIsHowToPlayOpen(true);
+  }
+
+  function closeHowToPlay() {
+    setIsHowToPlayOpen(false);
+  }
+
+  function openCreateGame() {
+    setIsCreateGameOpen(true);
+  }
+
+  function closeCreateGame() {
+    setIsCreateGameOpen(false);
+  }
+
   useEffect(() => {
     handleShuffle();
-    // Effect updates words which would update this effect
-    // which would update words (and on and on)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hideShuffle]);
+  }, []);
 
   return (
     <div>
-      {!hideShuffle && <div className="flex flex-row gap-4 justify-center content-center mt-4">
+      <div className="flex flex-row gap-4 justify-center content-center mt-4">
         <Button onClick={handleShuffle} icon={faShuffle} text="Shuffle" />
-      </div>}
+        <Button onClick={openHowToPlay} icon={faQuestionCircle} text="How To Play" />
+        <Button onClick={openCreateGame} icon={faPencil} text="Create Game" />
+      </div>
+      <Modal
+        isOpen={isHowToPlayOpen}
+        onRequestClose={closeHowToPlay}
+        contentLabel="How To Play"
+      >
+        4x3 is simple to play: there is a grid of nine words, and your goal is to
+        find four groups of three words from this grid. You might think that this is
+        impossible because 4 * 3 = 12, but there are only nine words! The trick is that
+        every category shares a special key word!
+      </Modal>
+      <Modal
+        isOpen={isCreateGameOpen}
+        onRequestClose={closeCreateGame}
+        contentLabel="Create Game"
+      >
+        <CreateGame />
+      </Modal>
       <div className="grid grid-cols-3 grid-rows-3 gap-4 p-4">
         {words.map(word => {
           const isSelected = selected.includes(word);
@@ -85,10 +117,6 @@ export default function Game({
           });
 
           function selectWord() {
-            if (disabled) {
-              return;
-            }
-
             if (isSelected) {
               const newSelected = [...selected];
               newSelected.splice(selected.indexOf(word), 1);

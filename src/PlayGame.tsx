@@ -37,7 +37,7 @@ export default function PlayGame() {
   }
 
   return (
-    <div>
+    <div className="bg-gray-100 h-screen overflow-y-auto">
       <Game
         solution={solution}
         selected={selected}

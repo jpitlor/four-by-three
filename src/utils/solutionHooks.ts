@@ -1,4 +1,3 @@
-import { useSearchParams } from "react-router";
 import type { ObscuredSolution, Solution } from "./Models.ts";
 
 const localStorageSolution = "current";
@@ -24,7 +23,7 @@ export function useSolution() {
 }
 
 function useSolutionFromUrl(): Solution | null {
-  const [searchParams] = useSearchParams();
+  const searchParams = new URLSearchParams(window.location.search);
   const s = searchParams.get("s");
   if (!s) {
     return null;
